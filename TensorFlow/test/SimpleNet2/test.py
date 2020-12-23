@@ -92,10 +92,10 @@ k2 = np.linspace(-0.1, 0.1, num=36, dtype=np.float32)
 k2 = clamp(np.floor(k2*128+0.5))/128.0
 
 
-init_bias = np.array([-0.05, 0.05])
-init_bias = clamp(np.floor(init_bias*128+0.5))/128.0
+init_bias = np.array([-0.0353 -0.01])#-0.05, 0.05])
+#init_bias = clamp(np.floor(init_bias*128+0.5))/128.0
 bias_initializer = tf.keras.initializers.constant(init_bias)
-
+print(init_bias)
 # Create functional model
 input_layer = tf.keras.Input(shape=(3, 5))
 reshape = tf.keras.layers.Reshape(target_shape=(3, 5, 1))(input_layer)
@@ -105,16 +105,20 @@ conv1 = ai8xTF.FusedConv2D(
     kernel_size=3,
     strides=1,
     padding_size=1,
-    use_bias=False,
+    #use_bias=False,
+    bias_initializer = bias_initializer,
     kernel_initializer=tf.keras.initializers.constant(k1)
     )(reshape)
 
-conv2 = ai8xTF.FusedConv2D(
+conv2 = ai8xTF.FusedMaxPoolConv2DReLU(
     filters=2,
     kernel_size=3,
     strides=1,
     padding_size=1,
-    use_bias=False,
+    pool_size=2,
+    pool_strides=2,
+    #use_bias=False,
+    bias_initializer = bias_initializer,
     kernel_initializer=tf.keras.initializers.constant(k2)
     )(conv1)
 
