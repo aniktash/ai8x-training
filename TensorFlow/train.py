@@ -134,7 +134,12 @@ class Logger():
         """
         pass  # pylint: disable=unnecessary-pass
 
-
+def clamp(x, minimum=-128, maximum=127):
+    """
+    clamp with max/min
+    """
+    return np.array(tf.clip_by_value(x, minimum, maximum))
+    
 def reformat_sample(image, first=True, swapped=False):
     """
     reformat image from Tensorflow default HWC formating
@@ -444,5 +449,13 @@ if __name__ == '__main__':
     tf.keras.utils.plot_model(
         model, to_file=os.path.join(logdir, 'model.png'), show_shapes=True)
 
-    # return log folder
+    for layer in model.layers:
+        weight = np.array((layer.get_weights()[0:1]))  # weights
+        # Convert to 8bit and round
+        print('Weight(8-bit)=\n', clamp(np.floor(weight*128+0.5)))
+        bias = (layer.get_weights()[1:2])  # bias
+        print('Bias (8-bit)=\n', clamp(np.floor(np.array(bias)*128+0.5))) #clamp(np.floor(bias*128+0.5)))
+        
+        # return log folder
     sys.exit(saved_model_dir)
+

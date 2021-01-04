@@ -19,54 +19,69 @@ IMG_SIZE = 64  # All images will be resized to 120x120
 # Setup model
 model = tf.keras.models.Sequential([
     tf.keras.Input(shape=(IMG_SIZE, IMG_SIZE, 3)),
-    ai8xTF.FusedConv2D(
-        filters=30,
-        kernel_size=3,
-        strides=1,
-        padding_size=1,
-        ),
-    ai8xTF.FusedMaxPoolConv2DReLU(
-        filters=30,
-        kernel_size=3,
-        strides=1,
-        padding_size=1,
-        pool_size=2,
-        pool_strides=2
-        ),
+ #   ai8xTF.FusedConv2D(
+ #       #filters=30,
+ #       filters=1,
+ #       kernel_size=3,
+ #       strides=1,
+ #       padding_size=1,
+ #       ),
+ #   ai8xTF.FusedMaxPoolConv2DReLU(
+ #       #filters=30,
+ #       filters=3,
+ #       kernel_size=3,
+ #       strides=1,
+ #       padding_size=1,
+ #       pool_size=2,
+ #       pool_strides=2,
+ #       ),
  #   tf.keras.layers.Dropout(0.2),
+ #   ai8xTF.FusedMaxPoolConv2DReLU(
+ #       filters=60,
+ #       kernel_size=3,
+ #       strides=1,
+ #       padding_size=1,
+ #       pool_size=2,
+ #       pool_strides=2
+ #       ),
+ #   ai8xTF.FusedMaxPoolConv2DReLU(
+ #       filters=30,
+ #       kernel_size=3,
+ #       strides=1,
+ #       padding_size=1,
+ #       pool_size=2,
+ #       pool_strides=2
+ #       ),
+ #   ai8xTF.FusedMaxPoolConv2DReLU(
+ #       filters=30,
+ #       kernel_size=3,
+ #       strides=1,
+ #       padding_size=1,
+ #       pool_size=2,
+ #       pool_strides=2
+ #       ),
+ #   ai8xTF.FusedConv2DReLU(
+ #       filters=30,
+ #        kernel_size=3,
+ #       strides=1,
+ #       padding_size=1
+ #       ),
+        
+        
     ai8xTF.FusedMaxPoolConv2DReLU(
-        filters=60,
+        filters=1,
         kernel_size=3,
         strides=1,
         padding_size=1,
-        pool_size=2,
-        pool_strides=2
+        #pool_size=2,
+        pool_size=16,
+        pool_strides=8, use_bias = True   # using bias also fails
         ),
-    ai8xTF.FusedMaxPoolConv2DReLU(
-        filters=30,
-        kernel_size=3,
-        strides=1,
-        padding_size=1,
-        pool_size=2,
-        pool_strides=2
-        ),
-    ai8xTF.FusedMaxPoolConv2DReLU(
-        filters=30,
-        kernel_size=3,
-        strides=1,
-        padding_size=1,
-        pool_size=2,
-        pool_strides=2
-        ),
-    ai8xTF.FusedConv2DReLU(
-        filters=30,
-        kernel_size=3,
-        strides=1,
-        padding_size=1
-        ),
+        
+        
     tf.keras.layers.Flatten(),
  #   tf.keras.layers.Dropout(0.2),
-    ai8xTF.FusedDense(3)
+    ai8xTF.FusedDense(3, use_bias = True )
 ])
 
 lr_schedule = tf.keras.callbacks.ReduceLROnPlateau(
